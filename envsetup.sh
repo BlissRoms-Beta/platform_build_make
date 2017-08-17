@@ -500,6 +500,13 @@ function lunch()
 
 function _lunch_meat()
 {
+    if (echo -n $1 | grep -q -e "^bliss_") ; then
+        BLISS_BUILD=$(echo -n $1 | sed -e 's/^bliss_//g')
+    else
+        BLISS_BUILD=
+    fi
+    export BLISS_BUILD
+
     local product=$1
     local release=$2
     local variant=$3
