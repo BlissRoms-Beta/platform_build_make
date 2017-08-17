@@ -159,6 +159,13 @@ function get_host_prebuilt_prefix
   else
     echo "Error: Invalid host operating system: $un" 1>&2
   fi
+  if (echo -n $1 | grep -q -e "^bliss_") ; then
+      BLISS_BUILD=$(echo -n $1 | sed -e 's/^bliss_//g')
+  else
+      BLISS_BUILD=
+  fi
+  export BLISS_BUILD
+
 }
 
 # Add directories to PATH that are dependent on the lunch target.
@@ -524,6 +531,8 @@ function _lunch_meat()
     local release=$2
     local variant=$3
 
+    check_product $product
+
     TARGET_PRODUCT=$product \
     TARGET_RELEASE=$release \
     TARGET_BUILD_VARIANT=$variant \
@@ -543,6 +552,8 @@ function _lunch_meat()
     export TARGET_BUILD_TYPE=release
 
     [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || echo
+
+    fixup_common_out_dir
 
     set_stuff_for_environment
     [[ -n "${ANDROID_QUIET_BUILD:-}" ]] || printconfig
